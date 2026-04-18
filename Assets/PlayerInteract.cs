@@ -7,8 +7,18 @@ public class PlayerInteract : MonoBehaviour
     public MorningRoutine routineManager;
     public string computerSceneName = "SampleScene";
 
+    private SleepSystem sleepSystem;
+
+    void Start()
+    {
+        sleepSystem = FindFirstObjectByType<SleepSystem>();
+    }
+
     void Update()
     {
+        // Блокируем взаимодействие пока идёт анимация сна
+        if (sleepSystem != null && sleepSystem.IsSleeping) return;
+
         Debug.DrawRay(transform.position, transform.forward * interactDistance, Color.red);
 
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.E))
@@ -43,7 +53,6 @@ public class PlayerInteract : MonoBehaviour
     {
         if (routineManager.foodOnDesk.activeSelf)
         {
-            // Сохраняем всё состояние перед уходом
             SaveState();
             Debug.Log("Загружаем сцену с компьютером...");
             SceneManager.LoadScene(computerSceneName);
@@ -59,15 +68,13 @@ public class PlayerInteract : MonoBehaviour
         var g = GlobalCycleManager.Instance;
         if (g == null) return;
 
-        // Позиция игрока
         g.savedPlayerPosition = transform.parent != null
-            ? transform.parent.position   // если камера дочерняя — берём родителя (тело игрока)
+            ? transform.parent.position
             : transform.position;
         g.savedPlayerRotationY = transform.parent != null
             ? transform.parent.eulerAngles.y
             : transform.eulerAngles.y;
 
-        // Состояние еды
         g.savedFoodOnDesk = routineManager.foodOnDesk.activeSelf;
         g.savedFoodInHand = routineManager.foodInHand.activeSelf;
         g.savedFoodInMicrowave = routineManager.foodInMicrowave.activeSelf;
@@ -78,13 +85,24 @@ public class PlayerInteract : MonoBehaviour
 
     private void TryGoToSleep()
     {
-        if (GlobalCycleManager.Instance != null && GlobalCycleManager.Instance.isWorkDone)
+        if (GlobalCycleManager.Instance == null) return;
+
+        if (GlobalCycleManager.Instance.isWorkDone)
         {
-            Debug.Log("Спокойной ночи...");
-            GlobalCycleManager.Instance.AdvanceDay();
-            routineManager.ResetForNewDay();
-            FindFirstObjectByType<PosterChanger>()?.UpdatePoster();
-            FindFirstObjectByType<SlenderManager>()?.OnNewDay();
+            if (sleepSystem != null)
+            {
+                sleepSystem.GoToSleep();
+            }
+            else
+            {
+                // Запасной вариант без анимации
+                Debug.Log("Спокойной ночи...");
+                GlobalCycleManager.Instance.AdvanceDay();
+                routineManager.ResetForNewDay();
+                FindFirstObjectByType<PosterChanger>()?.UpdatePoster();
+                FindFirstObjectByType<SlenderManager>()?.OnNewDay();
+                FindFirstObjectByType<AmbientManager>()?.PlayForCurrentDay();
+            }
         }
         else
         {
