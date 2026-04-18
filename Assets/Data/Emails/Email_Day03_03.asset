@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b7213668d353ecac9e1b16ed1c8f23d, type: 3}
+  m_Name: Email_Day03_03
+  m_EditorClassIdentifier: Assembly-CSharp::EmailData
+  senderName: Content Corp. Operations
+  senderAddress: ops@content-corp.net
+  subject: 'New tool: Replace function now available'
+  body: 'Dear Moderator,
+
+
+    We have added a new moderation action: REPLACE.
+
+
+    When
+    you encounter posts containing distressing or alarmist content, you may now replace
+    them with pre-approved positive content from our library.
+
+
+    Example: A post
+    about a ''city lockdown'' can be replaced with a post about a ''community festival''.
+
+
+    This
+    reduces viewer anxiety and maintains platform trust.
+
+
+    Thank you for your
+    continued dedication.
+
+
+    Operations Team
+
+    Content Corp.'
+  showOnDay: 3

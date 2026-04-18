@@ -17,10 +17,10 @@ public class ComputerWorkstation : MonoBehaviour
     [SerializeField] private Canvas workstationCanvas;
     [SerializeField] private PostUI postUI;
     [SerializeField] private EmailUI emailUI;
-    [SerializeField] private GameObject feedPanel;        // Панель с постом
-    [SerializeField] private GameObject emailPanel;       // Панель почты
-    [SerializeField] private Button emailTabButton;       // Кнопка ПОЧТА
-    [SerializeField] private Button feedTabButton;        // Кнопка ЛЕНТА
+    [SerializeField] private GameObject feedPanel;
+    [SerializeField] private GameObject emailPanel;
+    [SerializeField] private Button emailTabButton;
+    [SerializeField] private Button feedTabButton;
     [SerializeField] private GameObject dayCompletePanel;
     [SerializeField] private TMP_Text progressText;
 
@@ -28,14 +28,8 @@ public class ComputerWorkstation : MonoBehaviour
     [SerializeField] private Image fadeImage;
     [SerializeField] private float fadeDuration = 1f;
 
-    [Header("Игрок")]
-    [SerializeField] private MonoBehaviour playerController;
-    [SerializeField] private GameObject playerCamera;
-    [SerializeField] private Camera workstationCamera;
-
     [Header("Вход/выход")]
     [SerializeField] private KeyCode exitKey = KeyCode.Escape;
-    [SerializeField] private ComputerInteractZone interactZone;
 
     public bool IsActive { get; private set; }
 
@@ -45,21 +39,31 @@ public class ComputerWorkstation : MonoBehaviour
 
     private void Start()
     {
+        // Прячем всё
         if (workstationCanvas != null) workstationCanvas.gameObject.SetActive(false);
         if (dayCompletePanel != null) dayCompletePanel.SetActive(false);
         if (emailPanel != null) emailPanel.SetActive(false);
+
+        // Fade сразу чёрный
         if (fadeImage != null)
         {
-            var c = fadeImage.color; c.a = 0f; fadeImage.color = c;
-            fadeImage.gameObject.SetActive(false);
+            fadeImage.gameObject.SetActive(true);
+            var c = fadeImage.color;
+            c.a = 1f;
+            fadeImage.color = c;
         }
+
         if (postUI != null)
         {
             postUI.OnDeleteClicked += HandleDelete;
             postUI.OnApproveClicked += HandleApprove;
         }
+
         if (emailTabButton != null) emailTabButton.onClick.AddListener(ShowEmailPanel);
         if (feedTabButton != null) feedTabButton.onClick.AddListener(ShowFeedPanel);
+
+        // Сразу входим
+        StartCoroutine(EnterRoutine());
     }
 
     private void OnDestroy()
@@ -89,24 +93,15 @@ public class ComputerWorkstation : MonoBehaviour
         if (feedPanel != null) feedPanel.SetActive(true);
     }
 
-    public void EnterComputer()
-    {
-        if (IsActive) return;
-        StartCoroutine(EnterRoutine());
-    }
-
+    // Вход — вызывается автоматически при старте
     private IEnumerator EnterRoutine()
     {
         IsActive = true;
-        yield return StartCoroutine(Fade(0f, 1f));
-
-        if (playerController != null) playerController.enabled = false;
-        if (playerCamera != null) playerCamera.SetActive(false);
-        if (workstationCamera != null) workstationCamera.gameObject.SetActive(true);
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
+        // Показываем UI пока ещё чёрный экран
         if (workstationCanvas != null) workstationCanvas.gameObject.SetActive(true);
         if (dayCompletePanel != null) dayCompletePanel.SetActive(false);
         if (emailPanel != null) emailPanel.SetActive(false);
@@ -125,6 +120,7 @@ public class ComputerWorkstation : MonoBehaviour
         ShowNextPost();
         GameEvents.RaiseEnterComputer();
 
+        // Проявляемся из чёрного
         yield return StartCoroutine(Fade(1f, 0f));
     }
 
@@ -137,20 +133,10 @@ public class ComputerWorkstation : MonoBehaviour
     private IEnumerator ExitRoutine()
     {
         yield return StartCoroutine(Fade(0f, 1f));
-
-        if (workstationCanvas != null) workstationCanvas.gameObject.SetActive(false);
-        if (workstationCamera != null) workstationCamera.gameObject.SetActive(false);
-        if (playerCamera != null) playerCamera.SetActive(true);
-        if (playerController != null) playerController.enabled = true;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
         IsActive = false;
         GameEvents.RaiseExitComputer();
-        if (interactZone != null) interactZone.OnWorkstationExited();
-
-        yield return StartCoroutine(Fade(1f, 0f));
+        // Здесь можно загрузить другую сцену:
+        // UnityEngine.SceneManagement.SceneManager.LoadScene("HomeScene");
     }
 
     private void BuildTodayQueue()
@@ -208,7 +194,8 @@ public class ComputerWorkstation : MonoBehaviour
             fadeImage.color = c;
             yield return null;
         }
-        c.a = to; fadeImage.color = c;
+        c.a = to;
+        fadeImage.color = c;
         if (to == 0f) fadeImage.gameObject.SetActive(false);
     }
 }
