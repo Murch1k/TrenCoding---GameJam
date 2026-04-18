@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf9ef4d8d478f43e9b6b2c1f5d4c4d9f, type: 3}
+  m_Name: Safe_13
+  m_EditorClassIdentifier: Assembly-CSharp::PostData
+  content: Finally finished the 1000-piece puzzle I started in January. Mounted it
+    on the wall. It's staying there forever.
+  author: '@puzzle_person'
+  date: 17.04.2020
+  isHarmful: 0
+  dayAvailable: 3

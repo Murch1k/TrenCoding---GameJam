@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b7213668d353ecac9e1b16ed1c8f23d, type: 3}
+  m_Name: Email_Day05_05
+  m_EditorClassIdentifier: Assembly-CSharp::EmailData
+  senderName: Content Corp. HR
+  senderAddress: hr@content-corp.net
+  subject: "Performance review \u2014 outstanding work"
+  body: 'Dear Moderator,
+
+
+    Your performance this week has been exemplary. Your
+    compliance rate is among the highest on the team.
+
+
+    We want you to know that
+    your work matters. Every post you approve or remove shapes what millions of people
+    see and believe.
+
+
+    You have more power than you realise. Use it wisely.
+
+
+    HR
+    Department
+
+    Content Corp.'
+  showOnDay: 5

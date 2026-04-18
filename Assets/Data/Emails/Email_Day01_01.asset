@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b7213668d353ecac9e1b16ed1c8f23d, type: 3}
+  m_Name: Email_Day01_01
+  m_EditorClassIdentifier: Assembly-CSharp::EmailData
+  senderName: Content Corp. HR
+  senderAddress: hr@content-corp.net
+  subject: Welcome to the team
+  body: 'Dear Moderator,
+
+
+    Welcome aboard. You have been assigned to the Content
+    Review Division, Day Shift.
+
+
+    Your task is straightforward: review flagged
+    posts and remove anything that violates our Community Standards (spam, profanity,
+    abuse). Approve everything else.
+
+
+    You are helping make the internet a cleaner
+    place. We appreciate your service.
+
+
+    Best regards,
+
+    HR Department
+
+    Content
+    Corp.'
+  showOnDay: 1
