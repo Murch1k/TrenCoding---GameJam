@@ -2,31 +2,40 @@ using UnityEngine;
 
 public class GlobalCycleManager : MonoBehaviour
 {
-    // Статическая ссылка, чтобы любой скрипт мог написать GlobalCycleManager.Instance
     public static GlobalCycleManager Instance { get; private set; }
 
-    [Header("Настройки времени")]
     public int currentDay = 1;
-    public bool isWorkDone = false; // Пример: выполнил ли игрок работу за компом сегодня
+    public bool isWorkDone = false;
+    public bool justReturnedFromPC = false;
+
+    // Сохранённое состояние сцены
+    [HideInInspector] public Vector3 savedPlayerPosition;
+    [HideInInspector] public float savedPlayerRotationY;
+    [HideInInspector] public bool savedFoodOnDesk;
+    [HideInInspector] public bool savedFoodInHand;
+    [HideInInspector] public bool savedFoodInMicrowave;
+    [HideInInspector] public bool savedFoodInDrawer;
+    [HideInInspector] public bool savedHasFood;
+    [HideInInspector] public bool savedFoodIsCooked;
 
     private void Awake()
     {
-        // Реализация Singleton (Одиночки)
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Объект не удалится при смене сцены
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject); // Удаляем дубликат, если мы вернулись в первую сцену
+            Destroy(gameObject);
         }
     }
 
     public void AdvanceDay()
     {
         currentDay++;
-        isWorkDone = false; // Сбрасываем флаги для нового дня
+        isWorkDone = false;
+        justReturnedFromPC = false;
         Debug.Log("Наступил день №" + currentDay);
     }
 }

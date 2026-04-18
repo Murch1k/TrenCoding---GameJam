@@ -134,9 +134,17 @@ public class ComputerWorkstation : MonoBehaviour
     {
         yield return StartCoroutine(Fade(0f, 1f));
         IsActive = false;
+
+        if (GlobalCycleManager.Instance != null)
+        {
+            GlobalCycleManager.Instance.isWorkDone = true;
+            GlobalCycleManager.Instance.justReturnedFromPC = true;
+        }
+
         GameEvents.RaiseExitComputer();
-        // Здесь можно загрузить другую сцену:
-        // UnityEngine.SceneManagement.SceneManager.LoadScene("HomeScene");
+
+        // ← Этой строки не было! Без неё Escape никуда не вёл
+        UnityEngine.SceneManagement.SceneManager.LoadScene("scene52");
     }
 
     private void BuildTodayQueue()
@@ -186,6 +194,13 @@ public class ComputerWorkstation : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         yield return StartCoroutine(Fade(0f, 1f));
+
+        if (GlobalCycleManager.Instance != null)
+        {
+            GlobalCycleManager.Instance.isWorkDone = true;
+            GlobalCycleManager.Instance.justReturnedFromPC = true;
+        }
+
         UnityEngine.SceneManagement.SceneManager.LoadScene("scene52");
     }
 

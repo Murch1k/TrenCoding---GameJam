@@ -1,4 +1,4 @@
-using UnityEngine;
+п»їusing UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerInteract : MonoBehaviour
@@ -19,7 +19,7 @@ public class PlayerInteract : MonoBehaviour
             if (Physics.Raycast(ray, out hit, interactDistance))
             {
                 string tag = GetTagInParents(hit.collider.transform);
-                Debug.Log("Попал в: " + hit.collider.gameObject.name + " | Тег: " + tag);
+                Debug.Log("РџРѕРїР°Р» РІ: " + hit.collider.gameObject.name + " | РўРµРі: " + tag);
 
                 if (tag == "Drawer")
                     routineManager.TakeFoodFromDrawer();
@@ -34,7 +34,7 @@ public class PlayerInteract : MonoBehaviour
             }
             else
             {
-                Debug.Log("Ни во что не попал.");
+                Debug.Log("РќРё РІРѕ С‡С‚Рѕ РЅРµ РїРѕРїР°Р».");
             }
         }
     }
@@ -43,27 +43,52 @@ public class PlayerInteract : MonoBehaviour
     {
         if (routineManager.foodOnDesk.activeSelf)
         {
-            Debug.Log("Загружаем сцену с компьютером...");
+            // РЎРѕС…СЂР°РЅСЏРµРј РІСЃС‘ СЃРѕСЃС‚РѕСЏРЅРёРµ РїРµСЂРµРґ СѓС…РѕРґРѕРј
+            SaveState();
+            Debug.Log("Р—Р°РіСЂСѓР¶Р°РµРј СЃС†РµРЅСѓ СЃ РєРѕРјРїСЊСЋС‚РµСЂРѕРј...");
             SceneManager.LoadScene(computerSceneName);
         }
         else
         {
-            Debug.Log("Сначала поешь!");
+            Debug.Log("РЎРЅР°С‡Р°Р»Р° РїРѕРµС€СЊ!");
         }
+    }
+
+    private void SaveState()
+    {
+        var g = GlobalCycleManager.Instance;
+        if (g == null) return;
+
+        // РџРѕР·РёС†РёСЏ РёРіСЂРѕРєР°
+        g.savedPlayerPosition = transform.parent != null
+            ? transform.parent.position   // РµСЃР»Рё РєР°РјРµСЂР° РґРѕС‡РµСЂРЅСЏСЏ вЂ” Р±РµСЂС‘Рј СЂРѕРґРёС‚РµР»СЏ (С‚РµР»Рѕ РёРіСЂРѕРєР°)
+            : transform.position;
+        g.savedPlayerRotationY = transform.parent != null
+            ? transform.parent.eulerAngles.y
+            : transform.eulerAngles.y;
+
+        // РЎРѕСЃС‚РѕСЏРЅРёРµ РµРґС‹
+        g.savedFoodOnDesk = routineManager.foodOnDesk.activeSelf;
+        g.savedFoodInHand = routineManager.foodInHand.activeSelf;
+        g.savedFoodInMicrowave = routineManager.foodInMicrowave.activeSelf;
+        g.savedFoodInDrawer = routineManager.foodInDrawer != null && routineManager.foodInDrawer.activeSelf;
+        g.savedHasFood = routineManager.hasFood;
+        g.savedFoodIsCooked = routineManager.foodIsCooked;
     }
 
     private void TryGoToSleep()
     {
-        // Спать можно только если поработал за компом
         if (GlobalCycleManager.Instance != null && GlobalCycleManager.Instance.isWorkDone)
         {
-            Debug.Log("Спокойной ночи...");
+            Debug.Log("РЎРїРѕРєРѕР№РЅРѕР№ РЅРѕС‡Рё...");
             GlobalCycleManager.Instance.AdvanceDay();
             routineManager.ResetForNewDay();
+            FindFirstObjectByType<PosterChanger>()?.UpdatePoster();
+            FindFirstObjectByType<SlenderManager>()?.OnNewDay();
         }
         else
         {
-            Debug.Log("Сначала нужно поработать за компьютером!");
+            Debug.Log("РЎРЅР°С‡Р°Р»Р° РЅСѓР¶РЅРѕ РїРѕСЂР°Р±РѕС‚Р°С‚СЊ Р·Р° РєРѕРјРїСЊСЋС‚РµСЂРѕРј!");
         }
     }
 

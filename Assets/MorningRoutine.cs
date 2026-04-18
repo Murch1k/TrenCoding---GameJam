@@ -25,8 +25,49 @@ public class MorningRoutine : MonoBehaviour
 
     void Start()
     {
+        if (GlobalCycleManager.Instance != null && GlobalCycleManager.Instance.justReturnedFromPC)
+        {
+            RestoreState();
+            Debug.Log("Работа сделана! Иди спать.");
+            return;
+        }
+
         ResetForNewDay();
     }
+
+    private void RestoreState()
+    {
+        var g = GlobalCycleManager.Instance;
+
+        // Восстанавливаем еду
+        hasFood = g.savedHasFood;
+        foodIsCooked = g.savedFoodIsCooked;
+
+        if (foodInHand != null) foodInHand.SetActive(g.savedFoodInHand);
+        if (foodInMicrowave != null) foodInMicrowave.SetActive(g.savedFoodInMicrowave);
+        if (foodOnDesk != null) foodOnDesk.SetActive(g.savedFoodOnDesk);
+        if (foodInDrawer != null) foodInDrawer.SetActive(g.savedFoodInDrawer);
+
+        if (drawerObject != null)
+        {
+            Vector3 pos = drawerObject.transform.localPosition;
+            pos.x = 0.467f;
+            drawerObject.transform.localPosition = pos;
+        }
+
+        if (microwaveLight != null) microwaveLight.enabled = false;
+
+        // Восстанавливаем позицию игрока
+        // Ищем тело игрока (объект с тегом Player)
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            player.transform.position = g.savedPlayerPosition;
+            player.transform.eulerAngles = new Vector3(0, g.savedPlayerRotationY, 0);
+        }
+    }
+
+
 
     // ─── Сброс для нового дня ────────────────────────────────
     public void ResetForNewDay()
