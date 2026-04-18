@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 82f3979ed9f7f424aa6d088545efd741
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - foodInHand: {instanceID: 0}
+  - foodInMicrowave: {instanceID: 0}
+  - foodOnDesk: {instanceID: 0}
+  - drawerObject: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
