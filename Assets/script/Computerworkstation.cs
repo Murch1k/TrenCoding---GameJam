@@ -179,6 +179,14 @@ public class ComputerWorkstation : MonoBehaviour
         postUI.Clear();
         UpdateProgress();
         GameEvents.RaiseWorkDayComplete();
+        StartCoroutine(LoadNextScene());
+    }
+
+    private IEnumerator LoadNextScene()
+    {
+        yield return new WaitForSeconds(2f);
+        yield return StartCoroutine(Fade(0f, 1f));
+        UnityEngine.SceneManagement.SceneManager.LoadScene("scene52");
     }
 
     private IEnumerator Fade(float from, float to)
