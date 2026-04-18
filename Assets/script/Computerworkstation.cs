@@ -11,7 +11,6 @@ public class ComputerWorkstation : MonoBehaviour
     [SerializeField] private PostDatabase postDatabase;
     [SerializeField] private List<EmailData> allEmails = new List<EmailData>();
     [SerializeField] private int postsPerDay = 8;
-    [SerializeField] private int currentDay = 1;
 
     [Header("UI — рабочий стол")]
     [SerializeField] private Canvas workstationCanvas;
@@ -33,18 +32,17 @@ public class ComputerWorkstation : MonoBehaviour
 
     public bool IsActive { get; private set; }
 
+    private int currentDay = 1;
     private Queue<PostData> todayQueue = new Queue<PostData>();
     private int processedCount = 0;
     private PostData currentPost;
 
     private void Start()
     {
-        // Прячем всё
         if (workstationCanvas != null) workstationCanvas.gameObject.SetActive(false);
         if (dayCompletePanel != null) dayCompletePanel.SetActive(false);
         if (emailPanel != null) emailPanel.SetActive(false);
 
-        // Fade сразу чёрный
         if (fadeImage != null)
         {
             fadeImage.gameObject.SetActive(true);
@@ -62,7 +60,6 @@ public class ComputerWorkstation : MonoBehaviour
         if (emailTabButton != null) emailTabButton.onClick.AddListener(ShowEmailPanel);
         if (feedTabButton != null) feedTabButton.onClick.AddListener(ShowFeedPanel);
 
-        // Сразу входим
         StartCoroutine(EnterRoutine());
     }
 
@@ -93,15 +90,15 @@ public class ComputerWorkstation : MonoBehaviour
         if (feedPanel != null) feedPanel.SetActive(true);
     }
 
-    // Вход — вызывается автоматически при старте
     private IEnumerator EnterRoutine()
     {
         IsActive = true;
-
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Показываем UI пока ещё чёрный экран
+        if (GlobalCycleManager.Instance != null)
+            currentDay = GlobalCycleManager.Instance.currentDay;
+
         if (workstationCanvas != null) workstationCanvas.gameObject.SetActive(true);
         if (dayCompletePanel != null) dayCompletePanel.SetActive(false);
         if (emailPanel != null) emailPanel.SetActive(false);
@@ -120,7 +117,6 @@ public class ComputerWorkstation : MonoBehaviour
         ShowNextPost();
         GameEvents.RaiseEnterComputer();
 
-        // Проявляемся из чёрного
         yield return StartCoroutine(Fade(1f, 0f));
     }
 
@@ -134,16 +130,7 @@ public class ComputerWorkstation : MonoBehaviour
     {
         yield return StartCoroutine(Fade(0f, 1f));
         IsActive = false;
-
-        if (GlobalCycleManager.Instance != null)
-        {
-            GlobalCycleManager.Instance.isWorkDone = true;
-            GlobalCycleManager.Instance.justReturnedFromPC = true;
-        }
-
         GameEvents.RaiseExitComputer();
-
-        // ← Этой строки не было! Без неё Escape никуда не вёл
         UnityEngine.SceneManagement.SceneManager.LoadScene("scene52");
     }
 
@@ -175,10 +162,19 @@ public class ComputerWorkstation : MonoBehaviour
     {
         if (currentPost == null) return;
         bool correct = (shouldDelete == currentPost.isHarmful);
-        if (correct) GameEvents.RaiseCorrect();
-        else GameEvents.RaiseWrong();
-        processedCount++;
-        ShowNextPost();
+        if (correct)
+        {
+            GameEvents.RaiseCorrect();
+            processedCount++;
+            ShowNextPost();
+        }
+        else
+        {
+            GameEvents.RaiseWrong();
+            // Возвращаем пост в конец очереди — надо ответить правильно
+            todayQueue.Enqueue(currentPost);
+            ShowNextPost();
+        }
     }
 
     private void FinishWorkDay()
@@ -187,6 +183,8 @@ public class ComputerWorkstation : MonoBehaviour
         postUI.Clear();
         UpdateProgress();
         GameEvents.RaiseWorkDayComplete();
+        if (GlobalCycleManager.Instance != null)
+            GlobalCycleManager.Instance.isWorkDone = true;
         StartCoroutine(LoadNextScene());
     }
 
@@ -194,13 +192,6 @@ public class ComputerWorkstation : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         yield return StartCoroutine(Fade(0f, 1f));
-
-        if (GlobalCycleManager.Instance != null)
-        {
-            GlobalCycleManager.Instance.isWorkDone = true;
-            GlobalCycleManager.Instance.justReturnedFromPC = true;
-        }
-
         UnityEngine.SceneManagement.SceneManager.LoadScene("scene52");
     }
 
