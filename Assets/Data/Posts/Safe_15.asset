@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf9ef4d8d478f43e9b6b2c1f5d4c4d9f, type: 3}
-  m_Name: Post_Spam_01
+  m_Name: Safe_15
   m_EditorClassIdentifier: Assembly-CSharp::PostData
-  content: mama shluha
-  author: Ya
-  date: 14.03.22
-  isHarmful: 1
-  dayAvailable: 0
+  content: The old cinema downtown is reopening as an independent arts venue. First
+    event is a jazz night next Friday.
+  author: '@arts_district'
+  date: 17.04.2020
+  isHarmful: 0
+  dayAvailable: 3

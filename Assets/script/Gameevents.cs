@@ -4,11 +4,11 @@ using System;
 // Не нужно тащить ссылки между компонентами.
 public static class GameEvents
 {
-    public static event Action OnCorrectAnswer;     // Правильно промодерировал
-    public static event Action OnWrongAnswer;       // Ошибся (отнимать sense bar тут)
-    public static event Action OnWorkDayComplete;   // 8 постов обработано
-    public static event Action OnEnterComputer;     // Сел за комп
-    public static event Action OnExitComputer;      // Встал из-за компа
+    public static event Action OnCorrectAnswer;    
+    public static event Action OnWrongAnswer;       
+    public static event Action OnWorkDayComplete;  
+    public static event Action OnEnterComputer;    
+    public static event Action OnExitComputer;      
 
     public static void RaiseCorrect() => OnCorrectAnswer?.Invoke();
     public static void RaiseWrong() => OnWrongAnswer?.Invoke();
