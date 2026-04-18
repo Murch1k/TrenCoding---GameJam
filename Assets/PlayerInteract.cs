@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerInteract : MonoBehaviour
 {
     public float interactDistance = 5f;
     public MorningRoutine routineManager;
+    public string computerSceneName = "SampleScene";
 
     void Update()
     {
@@ -16,9 +18,7 @@ public class PlayerInteract : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, interactDistance))
             {
-                // Ищем тег на объекте, его родителе и деде
                 string tag = GetTagInParents(hit.collider.transform);
-
                 Debug.Log("Попал в: " + hit.collider.gameObject.name + " | Тег: " + tag);
 
                 if (tag == "Drawer")
@@ -27,6 +27,10 @@ public class PlayerInteract : MonoBehaviour
                     routineManager.InteractWithMicrowave();
                 else if (tag == "Desk")
                     routineManager.PutFoodOnDesk();
+                else if (tag == "PC")
+                    TryUsePC();
+                else if (tag == "Bed")
+                    TryGoToSleep();
             }
             else
             {
@@ -35,7 +39,34 @@ public class PlayerInteract : MonoBehaviour
         }
     }
 
-    // Ищет тег вверх по иерархии (на случай вложенных объектов)
+    private void TryUsePC()
+    {
+        if (routineManager.foodOnDesk.activeSelf)
+        {
+            Debug.Log("Загружаем сцену с компьютером...");
+            SceneManager.LoadScene(computerSceneName);
+        }
+        else
+        {
+            Debug.Log("Сначала поешь!");
+        }
+    }
+
+    private void TryGoToSleep()
+    {
+        // Спать можно только если поработал за компом
+        if (GlobalCycleManager.Instance != null && GlobalCycleManager.Instance.isWorkDone)
+        {
+            Debug.Log("Спокойной ночи...");
+            GlobalCycleManager.Instance.AdvanceDay();
+            routineManager.ResetForNewDay();
+        }
+        else
+        {
+            Debug.Log("Сначала нужно поработать за компьютером!");
+        }
+    }
+
     private string GetTagInParents(Transform t)
     {
         while (t != null)

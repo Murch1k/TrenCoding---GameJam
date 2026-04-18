@@ -7,6 +7,8 @@ TagManager:
   - Drawer
   - Microwave
   - Desk
+  - PC
+  - Bed
   layers:
   - Default
   - TransparentFX

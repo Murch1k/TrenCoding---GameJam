@@ -7,14 +7,14 @@ public class MorningRoutine : MonoBehaviour
     public GameObject foodInHand;
     public GameObject foodInMicrowave;
     public GameObject foodOnDesk;
-    public GameObject foodInDrawer; // каша лежащая в ящике
+    public GameObject foodInDrawer;
 
     [Header("Мебель")]
     public GameObject drawerObject;
 
     [Header("Микроволновка")]
-    public Light microwaveLight;       // источник света внутри
-    public Color cookingColor = Color.yellow; // цвет лампочки
+    public Light microwaveLight;
+    public Color cookingColor = Color.yellow;
 
     [Header("Состояния")]
     public bool hasFood = false;
@@ -25,9 +25,33 @@ public class MorningRoutine : MonoBehaviour
 
     void Start()
     {
-        // В начале каша лежит в ящике
-        if (foodInDrawer != null) foodInDrawer.SetActive(true);
+        ResetForNewDay();
+    }
+
+    // ─── Сброс для нового дня ────────────────────────────────
+    public void ResetForNewDay()
+    {
+        hasFood = false;
+        foodIsCooked = false;
+        isDrawerOpen = false;
+        isAnimating = false;
+
+        if (foodInHand != null) foodInHand.SetActive(false);
+        if (foodInMicrowave != null) foodInMicrowave.SetActive(false);
+        if (foodOnDesk != null) foodOnDesk.SetActive(false);
+        if (foodInDrawer != null) foodInDrawer.SetActive(true); // каша снова в ящике
+
+        // Ящик закрыт
+        if (drawerObject != null)
+        {
+            Vector3 pos = drawerObject.transform.localPosition;
+            pos.x = 0.467f;
+            drawerObject.transform.localPosition = pos;
+        }
+
         if (microwaveLight != null) microwaveLight.enabled = false;
+
+        Debug.Log("День " + (GlobalCycleManager.Instance != null ? GlobalCycleManager.Instance.currentDay : 1) + ". Доброе утро!");
     }
 
     // ─── Ящик ───────────────────────────────────────────────
@@ -43,14 +67,11 @@ public class MorningRoutine : MonoBehaviour
         }
         else if (isDrawerOpen && !hasFood && !foodIsCooked)
         {
-            // Берём еду из ящика
-            if (foodInDrawer != null) foodInDrawer.SetActive(false); // каша исчезает из ящика
+            if (foodInDrawer != null) foodInDrawer.SetActive(false);
             hasFood = true;
             foodInHand.SetActive(true);
-
-            StartCoroutine(MoveDrawer(0.467f)); // закрываем
+            StartCoroutine(MoveDrawer(0.467f));
             isDrawerOpen = false;
-
             Debug.Log("Еда в руках! Иди к микроволновке.");
         }
     }
@@ -59,11 +80,9 @@ public class MorningRoutine : MonoBehaviour
     {
         isAnimating = true;
         float speed = 1.5f;
-
         Vector3 startPos = drawerObject.transform.localPosition;
         Vector3 endPos = startPos;
         endPos.x = targetX;
-
         float t = 0f;
         while (t < 1f)
         {
@@ -71,7 +90,6 @@ public class MorningRoutine : MonoBehaviour
             drawerObject.transform.localPosition = Vector3.Lerp(startPos, endPos, t);
             yield return null;
         }
-
         drawerObject.transform.localPosition = endPos;
         isAnimating = false;
     }
@@ -92,10 +110,7 @@ public class MorningRoutine : MonoBehaviour
             foodInMicrowave.SetActive(false);
             foodInHand.SetActive(true);
             hasFood = true;
-
-            // Выключаем лампочку когда забираем
             if (microwaveLight != null) microwaveLight.enabled = false;
-
             Debug.Log("Еда готова! Неси к столу.");
         }
         else if (!hasFood && !foodIsCooked && foodInMicrowave.activeSelf)
@@ -106,18 +121,13 @@ public class MorningRoutine : MonoBehaviour
 
     private IEnumerator CookFood()
     {
-        // Включаем лампочку
         if (microwaveLight != null)
         {
             microwaveLight.enabled = true;
             microwaveLight.color = cookingColor;
         }
-
-        Debug.Log("Готовится...");
         yield return new WaitForSeconds(10f);
         foodIsCooked = true;
-
-        // Мигаем когда готово
         StartCoroutine(BlinkLight());
         Debug.Log("Готово! Подойди и забери.");
     }
@@ -141,7 +151,7 @@ public class MorningRoutine : MonoBehaviour
             hasFood = false;
             foodInHand.SetActive(false);
             foodOnDesk.SetActive(true);
-            Debug.Log("Приятного аппетита!");
+            Debug.Log("Приятного аппетита! Теперь садись за комп.");
         }
         else if (!hasFood)
             Debug.Log("Сначала возьми еду!");
